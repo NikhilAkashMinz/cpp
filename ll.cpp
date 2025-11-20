@@ -16,7 +16,7 @@ class List{
     public:
         Node* head;
         Node* tail;
-    
+     
     List(){
         head = tail = NULL;
     }
@@ -71,6 +71,27 @@ class List{
         tail = temp;
         
     }
+
+    void insert(int val , int pos){
+
+        Node* temp = head;
+
+        if(pos < 0) return;
+
+        if(pos == 0) 
+            push_front(val);
+
+        for(int i=0;i<pos-1;i++)
+        {
+            temp = temp->next;
+        }
+
+        Node* newNode = new Node(val);
+
+        newNode->next = temp->next;
+        temp->next = newNode;
+
+    }
 };
 
 
@@ -86,8 +107,12 @@ int main()
 
     ll.push_back(3);
     ll.push_back(4);    
+    ll.push_back(4);    
     ll.traverse();
-    ll.delete_back();
+    //ll.delete_back();
+    
+    ll.insert(5,4);
     ll.traverse();
+
     return 0;
 }
