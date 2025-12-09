@@ -1,0 +1,37 @@
+#inclucde <stdlib.h>
+#inclucde <stdio.h>
+
+#define Max 20
+
+typedef struct myQueue{
+    int arr[Max]
+    int rear,fornt;
+}* Queue;
+
+void Initilize(Queue q)
+{
+    q->front = q->rear = -1;
+}
+
+int isEmpty(Queue q)
+{
+    return q->front == -1;
+}
+
+int isFull(Queue q)
+{
+    return q->rear == Max-1;
+}
+
+void Enqueue(Queue q)
+{
+    if(isFull(q))
+        return "queue is full";
+}
+
+
+
+int main()
+{
+    return  0;
+}

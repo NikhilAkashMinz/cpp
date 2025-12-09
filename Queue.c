@@ -1,6 +1,8 @@
 #include<stdio.h>
 #include<stdlib.h>
 #define Max 20
+
+
 typedef struct{
     int items[Max];
     int rear,front;
