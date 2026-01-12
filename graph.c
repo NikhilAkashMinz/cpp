@@ -1,62 +1,65 @@
 #include<stdio.h>
 #include<stdlib.h>
 
+typedef struct{
+    int numVerticies;
+    int **adjMatric;
+}* Graph;
 
-typedef struct Graph{
-    int V;
-    int **adj;
-
-}*Graph;
-
-Graph createGrap(int v)
+Graph createGraph(int verticies)
 {
-    Graph graph = (Graph)malloc(sizeof(struct Graph));
-    graph->V = v;
+    Graph  graph = malloc(sizeof(Graph));
+    graph->numVerticies = verticies;
 
-    graph->adj = (int **)malloc(v * sizeof(int *));
-    for(int i=0;i<v;i++){
-        graph->adj[i] = (int *)malloc(v * sizeof(int));
-        for(int j=0;j<v;j++){
-            graph->adj[i][j] = 0;
+    graph->adjMatric = malloc(verticies*sizeof(int *));
+    for(int i = 0;i<verticies;i++)
+    {
+        graph->adjMatric[i] = malloc(verticies*sizeof(int*));
+        for(int j = 0;j<verticies;j++)
+        {
+            graph->adjMatric[i][j] = 0;
         }
     }
-
     return graph;
 }
 
-void addEdge(Graph graph, int s, int d)
+void addEdges(Graph graph,int src, int dest)
 {
-    graph->adj[s][d] = 1;
-    graph->adj[d][s] = 1;
+    graph->adjMatric[src][dest] = 1;
+    graph->adjMatric[dest][src] = 1;
 }
 
-void PrintGraph(Graph graph)
+void display(Graph graph)
 {
-    for(int i=0;i<graph->V;i++){
-        for(int j=0;j<graph->V;j++){
-            printf("%d ", graph->adj[i][j]);
+    for(int i = 0; i<graph->numVerticies;i++)
+    {
+        for(int j = 0; j<graph->numVerticies;j++)
+        {
+            printf("%d ", graph->adjMatric[i][j]);
         }
         printf("\n");
+
     }
 }
 
 void freeGraph(Graph graph)
 {
-    for(int i=0;i<graph->V;i++){
-        free(graph->adj[i]);
+    for(int i=0; i<graph->numVerticies;i++)
+    {
+        free(graph->adjMatric[i]);
     }
-    free(graph->adj);
+    free(graph->adjMatric);
     free(graph);
-    printf("Graph memory freed\n");
 }
 
-int main(){
-    Graph graph = createGrap(3);
-    addEdge(graph, 0, 1);
-    addEdge(graph, 1, 2);
-    addEdge(graph, 0, 2);
-    PrintGraph(graph);
+int main()
+{
+    int verticies = 4;
+    Graph graph = createGraph(verticies);
+    addEdges(graph , 0 , 1);
+    addEdges(graph , 1, 2);
+    addEdges(graph , 2, 3);
+    display(graph);
     freeGraph(graph);
-    PrintGraph(graph); 
     return 0;
 }
