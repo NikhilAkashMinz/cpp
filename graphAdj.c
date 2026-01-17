@@ -37,8 +37,71 @@ Graph createGraph(int V)
     return graph;
 }
 
+void addEdge(Graph graph, int src, int dest)
+{
+    NODE newNode =  newAdjNode(dest);
+    newNode->next = graph->array[src].head;
+    graph->array[src].head = newNode;
+
+    newNode = newAdjNode(src);
+    newNode->next = graph->array[dest].head;
+    graph->array[dest].head = newNode;
+}
+
+void Display(Graph graph)
+{
+    for(int v=0;v<graph->numVerticies;v++)
+    {
+        NODE curr = graph->array[v].head;
+        printf("\nAdjcecny list of vertext %d \n head ", v);
+
+        while(curr)
+        {
+            printf("-> %d", curr->dest);
+            curr = curr->next;
+        }
+        printf("\n");
+    }
+
+}
+
+void freeGraph(Graph graph)
+{
+    if (graph)
+    {
+        if (graph->array)
+        {
+            for (int v = 0; v < graph->numVerticies; v++)
+            {
+                NODE head = graph->array[v].head;
+                NODE temp;
+
+                while (head)
+                {
+                    temp = head;
+                    head = head->next;
+                    free(temp);
+                }
+            }
+            free(graph->array);
+        }
+        free(graph);
+    }
+}
+
 int main()
 {
+    int V = 3;
+
+    Graph graph = createGraph(V);
+
+    addEdge(graph, 0, 1);
+    addEdge(graph, 1, 2);
+
+    Display(graph);
+
+    freeGraph(graph);
+
     return 0;
 }
 
