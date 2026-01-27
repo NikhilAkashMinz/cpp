@@ -1,110 +1,191 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct myQueue {
-    int *arr;
-    int rear, front;
-    int capacity;
-} *Queue;
+typedef struct {
+    int numVerticies;
+    int **adjMatrix;
+}*GRAPH;
 
-Queue Initilize(int cap) {
-    Queue q = (Queue)malloc(sizeof(struct myQueue));
-    if (!q) {
-        printf("Memory allocation failed for queue\n");
-        exit(1);
-    }
-
-    q->arr = (int *)malloc(sizeof(int) * cap);
-    if (!q->arr) {
-        printf("Memory allocation failed for array\n");
-        exit(1);
-    }
-
-    q->front = q->rear = -1;
-    q->capacity = cap;
-    return q;
-}
-
-int isEmpty(Queue q) {
-    return q->front == -1;
-}
-
-int Resize(Queue q, int newCap) {
-    int *newArr = (int *)realloc(q->arr, sizeof(int) * newCap);
-    if (!newArr) return 0;   // failed
-
-    q->arr = newArr;
-    q->capacity = newCap;
-    return 1;
-}
-
-void Enqueue(Queue q, int val) {
-    // If full, grow capacity (e.g., double)
-    if (q->rear == q->capacity - 1) {
-        if (!Resize(q, q->capacity * 2)) {
-            printf("Resize failed\n");
-            exit(1);
+GRAPH createGraph(int verticies)
+{
+    GRAPH graph = malloc(sizeof(*graph));
+    graph->numVerticies = verticies;
+    graph->adjMatrix = malloc(verticies * sizeof(int *));   
+    for (int i = 0; i < verticies; i++) {
+        graph->adjMatrix[i] = malloc(verticies* sizeof(int));
+        for (int j = 0; j < verticies; j++) {
+            graph->adjMatrix[i][j] = 0;
         }
     }
 
-    if (isEmpty(q)) {
-        q->front = q->rear = 0;
-    } else {
-        q->rear++;
-    }
-
-    q->arr[q->rear] = val;
+    return graph;
 }
 
-int Dequeue(Queue q) {
-    if (isEmpty(q))
-        return -1;
-
-    int val = q->arr[q->front];
-
-    if (q->front == q->rear) {
-        // Queue becomes empty
-        q->front = q->rear = -1;
-    } else {
-        q->front++;
-    }
-
-    return val;
+void addEdge(GRAPH graph,int src,int dest)
+{
+    graph->adjMatrix[src][dest] = 1;
+    graph->adjMatrix[dest][src] = 1;
 }
 
-void Display(Queue q) {
-    if (isEmpty(q)) {
-        printf("Queue is empty.\n");
-        return;
+void Display(GRAPH graph)
+{
+    for(int i = 0; i<graph->numVerticies; i++)
+    {
+        for(int j = 0; j<graph->numVerticies; j++)
+        {
+            printf("%d ",graph->adjMatrix[i][j]);
+        }
+        printf("\n");
     }
-
-    for (int i = q->front; i <= q->rear; i++) {
-        printf("| %d | ", q->arr[i]);
-    }
-    printf("\n");
 }
 
-int Peek(Queue q) {
-    if (isEmpty(q)) return -1;
-    return q->arr[q->front];
+void freeGraph(GRAPH graph)
+{
+    for (int i = 0; i < graph->numVerticies; i++) {
+        free(graph->adjMatrix[i]);
+    }
+    free(graph->adjMatrix);
+    free(graph);
 }
 
-int main() {
-    Queue q = Initilize(2);   // start with capacity 2
+void dfs(GRAPH graph,int visited[],int node, int numNodes)
+{
+    visited[node]=1;
+    printf("%d ",node);
 
-    Enqueue(q, 10);
-    Enqueue(q, 20);
-    Enqueue(q, 30);           // triggers resize
+    for(int i=0;i<numNodes;i++)
+    {
+        if(graph->adjMatrix[node][i]==1 && !visited[i])
+        {
+            dfs(graph,visited,i,numNodes);
+        }
+    }
+}
 
-    Display(q);
+int main()
+{
+    GRAPH graph = createGraph(5);
+    addEdge(graph,0,1);
+    addEdge(graph,0,4);
+    addEdge(graph,1,4);
+    addEdge(graph,1,3);
+    addEdge(graph,1,2);
+    addEdge(graph,2,3);
+    addEdge(graph,3,4);
 
-    printf("Dequeued: %d\n", Dequeue(q));
-    Display(q);
-    Enqueue(q, 30);   
-    Enqueue(q, 30);   
-    Enqueue(q, 30);   
-    Display(q);
-    printf("Peek: %d\n", Peek(q));
-    
+    Display(graph);
+
+    int visited[5] = {0};
+
+    printf("\nDFS Traversal starting from node 0:\n");
+    dfs(graph, visited, 0, 5);
+    freeGraph(graph);
     return 0;
 }
+
+// typedef struct AdjNode {
+//     int dest;
+//     struct AdjNode* next;
+// } *NODE;
+
+// typedef struct Adj {
+//     NODE head;
+// } AdjList;
+
+// typedef struct myGraph {
+//     int numVerticies;
+//     AdjList* array;
+// } *GRAPH;
+
+// NODE newAdjNode(int dest)
+// {
+//     NODE newNode = (NODE)malloc(sizeof(struct AdjNode));
+//     if (!newNode) {
+//         printf("Memory allocation failed\n");
+//         exit(1);
+//     }
+//     newNode->dest = dest;
+//     newNode->next = NULL;
+//     return newNode;
+// }
+
+// GRAPH createGraph(int vert)
+// {
+//     GRAPH graph = (GRAPH)malloc(sizeof(struct myGraph));
+//     if (!graph) {
+//         printf("Memory allocation failed\n");
+//         exit(1);
+//     }
+
+//     graph->numVerticies = vert;
+//     graph->array = (AdjList*)malloc(vert * sizeof(AdjList));
+//     if (!graph->array) {
+//         printf("Memory allocation failed\n");
+//         exit(1);
+//     }
+
+//     for (int i = 0; i < vert; i++) {
+//         graph->array[i].head = NULL;
+//     }
+
+//     return graph;
+// }
+
+// void addEdge(GRAPH graph, int src, int dest)
+// {
+//     NODE newNode = newAdjNode(dest);
+//     newNode->next = graph->array[src].head;
+//     graph->array[src].head = newNode;
+
+//     newNode = newAdjNode(src);
+//     newNode->next = graph->array[dest].head;
+//     graph->array[dest].head = newNode;
+// }
+
+// void Display(GRAPH graph)
+// {
+//     for (int v = 0; v < graph->numVerticies; v++) {
+//         NODE currNode = graph->array[v].head;
+//         printf("Adjacency list of vertex %d\n head", v);
+//         while (currNode) {
+//             printf(" -> %d", currNode->dest);
+//             currNode = currNode->next;
+//         }
+//         printf("\n");
+//     }
+// }
+
+// void freeGraph(GRAPH graph)
+// {
+//     if (!graph) return;
+
+//     for (int i = 0; i < graph->numVerticies; i++) {
+//         NODE head = graph->array[i].head;
+//         while (head) {
+//             NODE temp = head;
+//             head = head->next;
+//             free(temp);
+//         }
+//     }
+
+//     free(graph->array);
+//     free(graph);
+// }
+
+// int main()
+// {
+//     GRAPH graph = createGraph(5);
+
+//     addEdge(graph, 0, 1);
+//     addEdge(graph, 0, 4);
+//     addEdge(graph, 1, 4);
+//     addEdge(graph, 1, 3);
+//     addEdge(graph, 1, 2);
+//     addEdge(graph, 2, 3);
+//     addEdge(graph, 3, 4);
+
+//     Display(graph);
+//     freeGraph(graph);
+
+//     return 0;
+// }
