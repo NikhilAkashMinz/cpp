@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data List Example</title>
+</head>
+<body>
+    <h1>Data List Example</h1>
+    <form action="/action_page.php" method="get">
+        <label for="browser">Choose your browser from the list:</label>
+        <input list="browsers" name="browser" id="browser">
+        <datalist id="browsers">
+            <option value="Edge">
+            <option value="Firefox">
+            <option value="Chrome">
+            <option value="Opera">
+            <option value="Safari">
+        </datalist>
+        <input type="button" value="Submit" onclick="window.open('https://giphy.com/gifs/kim-jong-un-dance-tM30Lho1ftoljF7ITU', '_blank');">
+    </form>
+    <p><strong>Note:</strong> The datalist tag is not supported in chrome</p>
+</body>
+</html>
